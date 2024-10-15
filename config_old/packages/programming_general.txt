@@ -1,7 +1,0 @@
-nvim
-nodejs
-python3
-openjdk-17-jdk
-golang
-docker.io
-

@@ -1,6 +1,0 @@
-libreoffice
-githumb
-shotwell
-vlc
-rhythmbox
-firefox

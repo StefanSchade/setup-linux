@@ -26,13 +26,14 @@ apply_keyboard_layout() {
 
   echo "Setting keyboard layout for user: $username"
 
+  # Switch to the user and set the keyboard layout
   if [ -n "$variant" ]; then
     sudo -u "$username" setxkbmap "$layout" "$variant"
   else
     sudo -u "$username" setxkbmap "$layout"
   fi
 
-  # Check for custom keymap
+  # Check for the user's custom keymap file (e.g., ~/.Xmodmap)
   keymap_file="$config_dir/keymap_$username.txt"
   if [ -f "$keymap_file" ]; then
     echo "Applying custom keymap for user: $username from $keymap_file"
@@ -40,9 +41,6 @@ apply_keyboard_layout() {
   else
     echo "No custom keymap found for user: $username. Skipping..."
   fi
-
-  # Refresh the keyboard layout
-  sudo -u "$username" setxkbmap -query
 }
 
 # Process the keyboard file
@@ -51,7 +49,7 @@ while IFS=',' read -r username layout variant; do
   layout=$(echo "$layout" | xargs)  # Trim spaces
   variant=$(echo "$variant" | xargs)  # Trim spaces if variant exists
 
-  # Set the layout for the user
+  # Call the function for each user
   apply_keyboard_layout "$username" "$layout" "$variant"
 done < <(grep -v '^#' "$keyboard_file")  # Ignore comment lines
 

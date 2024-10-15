@@ -14,7 +14,7 @@ run_user_tasks() {
     select task in "User Creation" "Setup Keymap" "Setup Git" "Exit"; do
         case $REPLY in
             1) bash ./users/create_users.sh "$INPUT_DIR" ;;
-            2) bash ./users/setup_keymap.sh "$INPUT_DIR" ;;
+            2) bash ./users/setup_keymaps.sh "$INPUT_DIR" ;;
             3) bash ./users/setup_git.sh "$INPUT_DIR" ;;
             4) bash ./users/setup_ssh.sh "$INPUT_DIR" ;;
             5) break ;;
