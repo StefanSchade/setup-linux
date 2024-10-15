@@ -1,2 +1,77 @@
-libreoffice
-curl
+# KDE Office Suite
+kde-full              # Complete KDE Desktop environment (includes KDE applications)
+calligra              # KDE office suite (alternative to LibreOffice)
+
+# Kubernetes Tools
+kubectl               # Kubernetes command-line tool
+kubeadm               # Tool for setting up Kubernetes clusters
+k3s                   # Lightweight Kubernetes (also available via script installation)
+helm                  # Kubernetes package manager
+
+# Development Tools
+git                   # Version control system
+vim                   # Command-line text editor
+neovim                # Improved version of Vim
+code                  # Visual Studio Code (needs to add repository manually)
+build-essential       # Essential development tools like gcc, g++
+cmake                 # Build system generator
+make                  # Build automation tool
+docker.io             # Docker engine for containers
+docker-compose        # Docker Compose to manage multi-container Docker apps
+nodejs                # JavaScript runtime for server-side scripting
+npm                   # Node.js package manager
+python3               # Python programming language
+python3-pip           # Python package manager
+openjdk-11-jdk        # Java Development Kit (JDK)
+maven                 # Apache Maven build automation tool for Java projects
+gradle                # Another build automation tool for Java
+clang                 # LLVM-based C/C++ compiler
+gdb                   # GNU Debugger
+sqlite3               # Lightweight SQL database
+postgresql            # PostgreSQL database server
+mysql-server          # MySQL database server
+virtualenv            # Python virtual environments
+
+# Web Development
+nginx                 # Web server
+apache2               # Web server
+php                   # PHP language support
+php-cli               # PHP command-line interface
+php-mysql             # MySQL support for PHP
+php-fpm               # PHP FastCGI Process Manager
+
+# Utilities and System Tools
+htop                  # Interactive process viewer
+tmux                  # Terminal multiplexer
+zsh                   # Z shell (alternative to bash)
+curl                  # Command-line tool for transferring data
+wget                  # Command-line utility for downloading files
+net-tools             # Networking tools (ifconfig, netstat, etc.)
+ufw                   # Uncomplicated Firewall
+gparted               # Partition editor
+synaptic              # Graphical package manager
+gnome-tweaks          # GNOME customization tool
+gnome-terminal        # GNOME terminal
+filezilla             # FTP client
+terminator            # Advanced terminal emulator
+
+# Office Productivity (non-KDE alternatives)
+libreoffice           # Office suite (writer, calc, impress, etc.)
+gimp                  # Image editor
+inkscape              # Vector graphics editor
+evince                # PDF viewer
+
+# Media Tools
+vlc                   # Media player
+audacity              # Audio editor
+kdenlive              # Video editor
+ffmpeg                # Command-line video and audio conversion tool
+shotwell              # Photo organizer
+
+# System Utilities
+bleachbit             # Disk cleanup tool
+gnome-disk-utility     # Disk management tool
+timeshift             # System restore tool
+rsync                 # File synchronization utility
+openssh-server        # OpenSSH server for remote access
+
