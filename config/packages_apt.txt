@@ -9,6 +9,7 @@ helm                  # Kubernetes package manager
 
 # Development Tools
 git                   # Version control system
+tmux                  # terminal multiplexer
 vim                   # Command-line text editor
 neovim                # Improved version of Vim
 build-essential       # Essential development tools like gcc, g++
@@ -39,7 +40,7 @@ php-mysql             # MySQL support for PHP
 php-fpm               # PHP FastCGI Process Manager
 
 # Utilities and System Tools
-htop                  # Interactive process viewer
+htop                  # Interactive process viewer:
 tmux                  # Terminal multiplexer
 zsh                   # Z shell (alternative to bash)
 curl                  # Command-line tool for transferring data
@@ -50,6 +51,7 @@ gparted               # Partition editor
 synaptic              # Graphical package manager
 gnome-tweaks          # GNOME customization tool
 gnome-terminal        # GNOME terminal
+tilix                 # tiled terminal (GNOME)
 filezilla             # FTP client
 terminator            # Advanced terminal emulator
 
@@ -58,6 +60,7 @@ libreoffice           # Office suite (writer, calc, impress, etc.)
 gimp                  # Image editor
 inkscape              # Vector graphics editor
 evince                # PDF viewer
+firefox               # browser
 
 # Media Tools
 vlc                   # Media player

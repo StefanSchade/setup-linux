@@ -1,0 +1,5 @@
+keycode 38 = a A a A adiaeresis Adiaeresis 
+keycode 39 = s S s S ssharp ssharp        
+keycode 30 = u U u U udiaeresis Udiaeresis 
+keycode 32 = o O o O odiaeresis Odiaeresis 
+keycode 31 = i I i I

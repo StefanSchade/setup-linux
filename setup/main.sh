@@ -11,11 +11,13 @@ sudo apt-get install -y curl unzip
 # Function to run user-level scripts=
 run_user_tasks() {
     echo "Select a user task:"
-    select task in "Keyboard Setup" "Git Setup" "Exit"; do
+    select task in "User Creation" "Setup Keymap" "Setup Git" "Exit"; do
         case $REPLY in
-            1) bash ~/linux-setup/scripts/user/setup_keyboard.sh "$INPUT_DIR/user-configs" ;;
-            2) bash ~/linux-setup/scripts/user/setup_git.sh "$INPUT_DIR/user-configs" ;;
-            3) break ;;
+            1) bash ./users/create_users.sh "$INPUT_DIR" ;;
+            2) bash ./users/setup_keymap.sh "$INPUT_DIR" ;;
+            3) bash ./users/setup_git.sh "$INPUT_DIR" ;;
+            4) bash ./users/setup_ssh.sh "$INPUT_DIR" ;;
+            5) break ;;
             *) echo "Invalid option";;
         esac
     done
