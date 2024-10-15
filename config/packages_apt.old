@@ -1,4 +1,5 @@
 # KDE Office Suite
+kde-full              # Complete KDE Desktop environment (includes KDE applications)
 calligra              # KDE office suite (alternative to LibreOffice)
 
 # Kubernetes Tools
@@ -11,6 +12,7 @@ helm                  # Kubernetes package manager
 git                   # Version control system
 vim                   # Command-line text editor
 neovim                # Improved version of Vim
+code                  # Visual Studio Code (needs to add repository manually)
 build-essential       # Essential development tools like gcc, g++
 cmake                 # Build system generator
 make                  # Build automation tool

@@ -25,9 +25,9 @@ run_user_tasks() {
 # Function to run system-level scripts
 run_system_tasks() {
     echo "Select a system task:"
-    select task in "Install Packages" "Update System" "Exit"; do
+    select task in "Install / Uninstall Packages" "Update System" "Exit"; do
         case $REPLY in
-            1) bash ./system/install_packages.sh "$INPUT_DIR" ;;
+            1) bash ./system/install_or_uninstall_packages.sh "$INPUT_DIR" ;;
             2) bash ~/linux-setup/scripts/system/update_system.sh "$INPUT_DIR/system-configs" ;;
             3) break ;;
             *) echo "Invalid option";;
