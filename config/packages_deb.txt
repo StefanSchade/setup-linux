@@ -1,0 +1,10 @@
+https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+https://downloads.slack-edge.com/releases/linux/4.33.84/prod/x64/slack-desktop-4.33.84-amd64.deb
+https://zoom.us/client/latest/zoom_amd64.deb
+https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_119.0.2151.6-1_amd64.deb
+https://repository-origin.spotify.com/pool/stable/s/spotify-client/spotify-client_1.2.20.1216.gd92e8f5b_amd64.deb
+https://discord.com/api/download?platform=linux&format=deb
+https://dl.pstmn.io/download/latest/linux64
+https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+https://github.com/shiftkey/desktop/releases/download/release-3.3.0-linux1/GitHubDesktop-linux-3.3.0-linux1.deb
+

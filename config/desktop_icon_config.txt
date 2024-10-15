@@ -1,0 +1,8 @@
+Name,Comment,Exec,Icon,Terminal,Type,Categories,UserOrSystem
+LibreOffice,Office Suite,libreoffice,libreoffice,False,Application,Office,system
+VLC,Media Player,vlc,vlc,False,Application,AudioVideo,system
+Spotify,Music Streaming,spotify,spotify,False,Application,Audio,system
+Visual Studio Code,Code Editor,code,code,False,Application,Development,system
+IntelliJ IDEA,Java IDE,intellij-idea,idea,False,Application,Development,user
+GIMP,Image Editor,gimp,gimp,False,Application,Graphics,user
+

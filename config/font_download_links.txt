@@ -1,0 +1,4 @@
+https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/CascadiaCode.zip
+https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/CodeNewRoman.zip
+https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/ComicShannsMono.zip
+https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/CommitMono.zip
