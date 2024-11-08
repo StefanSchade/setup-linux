@@ -3,35 +3,18 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# Check if directory argument is provided
-if [ $# -eq 0 ]; then
-  echo "Usage: $0 <config_directory>"
-  exit 1
-fi
-
-config_dir="$1"
-keyboard_file="$config_dir/keyboard.txt"
-
-# Check if the keyboard config file exists
-if [ ! -f "$keyboard_file" ]; then
-  echo "Error: '$keyboard_file' not found. Please provide the keyboard.txt file."
-  exit 1
-fi
+source ./helpers/file_utils.sh
 
 # Function to apply the keyboard layout for each user
 apply_keyboard_layout() {
   local username=$1
   local layout=$2
-  local variant=${3:-}
+  local variant=${3:-} # optional
 
-  echo "Setting keyboard layout for user: $username"
+  echo "Setting keyboard layout for user: $username layout: $layout variant: $variant"
 
   # Switch to the user and set the keyboard layout
-  if [ -n "$variant" ]; then
-    sudo -u "$username" setxkbmap "$layout" "$variant"
-  else
-    sudo -u "$username" setxkbmap "$layout"
-  fi
+  sudo -u "$username" setxkbmap "$layout" "$variant"
 
   # Check for the user's custom keymap file (e.g., ~/.Xmodmap)
   keymap_file="$config_dir/keymap_$username.txt"
@@ -42,6 +25,20 @@ apply_keyboard_layout() {
     echo "No custom keymap found for user: $username. Skipping..."
   fi
 }
+
+# Check if directory argument is provided
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <config_directory>"
+  exit 1
+fi
+
+echo "updating keymap" 
+
+config_dir="$1"
+keyboard_file="$config_dir/keyboard.txt"
+
+verify_file_existence $keyboard_file
+
 
 # Process the keyboard file
 echo "Processing keyboard settings from $keyboard_file..."

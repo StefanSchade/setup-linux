@@ -3,6 +3,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+source ./helpers/clean.sh
+source ./helpers/file_utils.sh
+
 # Check if directory argument is provided
 if [ $# -eq 0 ]; then
   echo "Usage: $0 <directory>"
@@ -12,24 +15,7 @@ fi
 config_dir="$1"
 users_file="$config_dir/users.txt"
 
-# Check if the users file exists
-if [ ! -f "$users_file" ]; then
-  echo "Error: '$users_file' not found. Please provide the users.txt file."
-  exit 1
-fi
-
-# Function to clean lines by removing comments and skipping empty lines
-clean_lines() {
-  while IFS= read -r line || [ -n "$line" ]; do
-    # Remove inline comments and trim leading/trailing whitespace
-    clean_line=$(echo "$line" | sed 's/#.*//' | xargs)
-
-    # Skip empty lines and commented lines
-    if [ -n "$clean_line" ]; then
-      echo "$clean_line"
-    fi
-  done
-}
+verify_file_existence $users_file
 
 # Check for existing users and create missing ones
 echo "Processing users from $users_file..."
@@ -44,4 +30,3 @@ clean_lines < "$users_file" | while IFS= read -r username; do
 done
 
 echo "User setup completed."
-
