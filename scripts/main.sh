@@ -12,7 +12,6 @@ usage() {
 # Function to handle cleanup on interruption
 cleanup() {
     echo "Script interrupted. Performing cleanup..."
-    # Add any additional cleanup commands here if necessary
     exit 1
 }
 
@@ -95,30 +94,40 @@ install_dependencies() {
     esac
 }
 
-# Define the input configuration directory
-INPUT_DIR="./config"
-
-# Define the output directory for system info
-OUTPUT_DIR="./system_reports"
-
-# Detect the package manager
-PACKAGE_MANAGER=$(detect_package_manager)
-
-if [ "$PACKAGE_MANAGER" = "unsupported" ]; then
-    echo "No supported package manager found (apt, pacman, dnf). Exiting."
-    exit 1
-fi
-
-# Wait for any ongoing package operations to finish
-wait_for_package_manager "$PACKAGE_MANAGER"
-
-# Install Script dependencies
-install_dependencies "$PACKAGE_MANAGER"
-
-# Remove traps after critical operations
-trap - SIGINT SIGTERM
-
-echo "Dependencies installed successfully."
+# Function to perform autoremove based on the detected package manager
+perform_autoremove() {
+    local pm="$1"
+    echo "Do you want to remove unnecessary packages? [y/N]"
+    read -r response
+    case "$response" in
+        [Yy]* )
+            echo "Removing unnecessary packages using $pm..."
+            case "$pm" in
+                apt)
+                    sudo apt autoremove -y
+                    ;;
+                pacman)
+                    orphans=$(pacman -Qdtq)
+                    if [ -n "$orphans" ]; then
+                        sudo pacman -Rns --noconfirm $orphans
+                    else
+                        echo "No orphaned packages found."
+                    fi
+                    ;;
+                dnf)
+                    sudo dnf autoremove -y
+                    ;;
+                *)
+                    echo "Unsupported package manager."
+                    ;;
+            esac
+            echo "Unnecessary packages removed successfully."
+            ;;
+        * )
+            echo "Skipping removal of unnecessary packages."
+            ;;
+    esac
+}
 
 # Function to run user-level scripts
 run_user_tasks() {
@@ -178,6 +187,34 @@ check_root() {
         exit 1
     fi
 }
+
+# Define the input configuration directory
+INPUT_DIR="./config"
+
+# Define the output directory for system info
+OUTPUT_DIR="./system_reports"
+
+# Detect the package manager
+PACKAGE_MANAGER=$(detect_package_manager)
+
+if [ "$PACKAGE_MANAGER" = "unsupported" ]; then
+    echo "No supported package manager found (apt, pacman, dnf). Exiting."
+    exit 1
+fi
+
+# Wait for any ongoing package operations to finish
+wait_for_package_manager "$PACKAGE_MANAGER"
+
+# Install Script dependencies
+install_dependencies "$PACKAGE_MANAGER"
+
+# Perform autoremove if the user chooses to
+perform_autoremove "$PACKAGE_MANAGER"
+
+# Remove traps after critical operations
+trap - SIGINT SIGTERM
+
+echo "Dependencies installed successfully."
 
 # Main menu function
 main_menu() {
