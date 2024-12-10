@@ -40,7 +40,7 @@ rectangle "Office Network" as Office {
         [**ID: 08:**\nDell G16 Laptop] as Dock_G16
     }
 
-    rectangle "Loose Network Cable" as LooseCable {
+    rectangle "Loose Network Cable\n(used for temporary connections)" as LooseCable {
         [**ID: 09:**\nLenovo 430s Laptop] as Cable_Lenovo
         [**ID: 10:**\nSony Vaio Laptop] as Cable_Sony
     }
@@ -67,26 +67,31 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
 
     [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
 
-    rectangle "VLAN 40: Production Services" as VLAN40 {
-        	[**ID: 25**\nSwitch (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
-	rectangle "Cluster Network (10Gbps)" as ClusterNet {
-        	[**ID: 19**\nMNBOXCONET N305\nKubernetes Node 1] as Cluster_Node_1
-        	[**ID: 20**\nMNBOXCONET N305\nKubernetes Node 2] as Cluster_Node_2
-        	[**ID: 21**\nMNBOXCONET N305\nKubernetes Node 3] as Cluster_Node_3
-        	[**ID: 22**\nMNBOXCONET N305\nKubernetes Node 4] as Cluster_Node_4
-        	[**ID: 26**\nMac Mini M4\nKubernetes Node 5] as Cluster_Node_5 #White
-        	[**ID: 27**\nMac Mini M4\nKubernetes Node 6] as Cluster_Node_6 #White
-	}
-    }
-    rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 {
+    rectangle "Kubernetes Cluster" as K8s #Darkgrey {
+	    rectangle "VLAN 40: Production Services" as VLAN40 #Coral {
+		rectangle "Cluster Network (10Gbps)" as ClusterNet #White {
+    			folder "Distributed File System (DFS)\ne.g. Longhorn or Ceph" as DFS
+        		[**ID: 25**\nSwitch (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
+        		[**ID: 19**\nMNBOXCONET N305\nKubernetes Node 1] as Cluster_Node_1
+        		[**ID: 20**\nMNBOXCONET N305\nKubernetes Node 2] as Cluster_Node_2
+        		[**ID: 21**\nMNBOXCONET N305\nKubernetes Node 3] as Cluster_Node_3
+        		[**ID: 22**\nMNBOXCONET N305\nKubernetes Node 4] as Cluster_Node_4
+        		[**ID: 26**\nMac Mini M4\nKubernetes Node 5] as Cluster_Node_5 #White
+        		[**ID: 27**\nMac Mini M4\nKubernetes Node 6] as Cluster_Node_6 #White
+		}
+	        [**ID: 30**\nFujitsu Futuro 930\nWeb Server] as Web_Server #White
+		folder "Local Storage\n(internal or\nUSB)" as local_storage
+    	  }
+     }
+
+     rectangle "VLAN 60: Storage/Backup" as VLAN60 #CornflowerBlue {
+        [***ID: 24**\nTerramaster F4-423\nNAS] as NAS_Storage
+     }
+
+     rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #DarkGreen {
         [**ID: 23**\nFujitsu Futuro 930\nMaintenance Server] as Maintenance_Server
     }
-    rectangle "VLAN 60: Storage/Backup" as VLAN60 {
-        [***ID: 24**\nTerramaster F4-423\nNAS] as NAS_Storage
-    }
 }
-
-
 
 Router_Device -- SWITCH_REPEATER
 SWITCH_REPEATER -- REPEATER
@@ -107,13 +112,13 @@ SWITCH_OFFICE -- PC_Mac
 SWITCH_OFFICE -- PC_Zotac
 SWITCH_OFFICE -- PC_MNBOX
 SWITCH_OFFICE -- Dock
-SWITCH_OFFICE -- LooseCable
+SWITCH_OFFICE -- LooseCable : Optional connection
 
-Dock -.- Dock_Latitude
-Dock -.- Dock_G16
+LooseCable .- Cable_Lenovo : Ad-hoc
+LooseCable .- Cable_Sony : Ad-hoc
 
-LooseCable -.- Cable_Lenovo
-LooseCable -.- Cable_Sony
+Dock -.- Dock_Latitude : Option 1
+Dock -.- Dock_G16 : Option 2
 
 SWITCH_MEDIA -- Media_Zotac
 SWITCH_MEDIA -- Media_Radio
@@ -122,13 +127,16 @@ SWITCH_MEDIA -- Media_TV
 SWITCH_CENTRAL -- Central_Printer
 SWITCH_CENTRAL -- Central_NAS
 
-' SWITCH_SERVERS -- VLAN40 : Production Services
-' SWITCH_SERVERS -- VLAN50 : Maintenance and Diagnostics
-' SWITCH_SERVERS -- VLAN60 : Storage/Backup
+SWITCH_SERVERS -[hidden]- VLAN40 : Production Services
+SWITCH_SERVERS -[hidden]- VLAN50 : Maintenance and Diagnostics
+SWITCH_SERVERS -[hidden]- VLAN60 : Storage/Backup
 
 SWITCH_SERVERS -- SWITCH_CLUSTER
 SWITCH_SERVERS -- Maintenance_Server 
+SWITCH_SERVERS -- Web_Server 
 SWITCH_SERVERS -- NAS_Storage 
+
+Web_Server ... local_storage
 
 SWITCH_CLUSTER -- Cluster_Node_1
 SWITCH_CLUSTER -- Cluster_Node_2
@@ -136,6 +144,22 @@ SWITCH_CLUSTER -- Cluster_Node_3
 SWITCH_CLUSTER -- Cluster_Node_4
 SWITCH_CLUSTER -- Cluster_Node_5
 SWITCH_CLUSTER -- Cluster_Node_6
+
+SWITCH_CLUSTER ----- PC_MNBOX : direct cluster \n access 10 GBit/s
+
+DFS ... Cluster_Node_1
+DFS ... Cluster_Node_2
+DFS ... Cluster_Node_3
+DFS ... Cluster_Node_4
+DFS ... Cluster_Node_5
+DFS ... Cluster_Node_6
+DFS ... NAS_Storage: backup
+
+
+
+
+K8s ... NAS_Storage: provides storage, hosts docker registry
+
 
 ' note top of ServerNet : VLANs logically isolate server functions.
 note top of FW_ETH_free : Might later be used to connect WLAN extenders
