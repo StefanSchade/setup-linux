@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
+set -m
 IFS=$'\n\t'
 
 # Function to handle cleanup on interruption
@@ -85,23 +86,6 @@ install_dependencies() {
             ;;
     esac
 }
-
-# Trap SIGINT and SIGTERM to execute the cleanup function
-trap cleanup SIGINT SIGTERM
-
-# Define the input configuration directory
-INPUT_DIR="./config"
-
-# Define the output directory for system info
-OUTPUT_DIR="./system_reports"
-
-# Detect the package manager
-PACKAGE_MANAGER=$(detect_package_manager)
-
-if [ "$PACKAGE_MANAGER" = "unsupported" ]; then
-    echo "No supported package manager found (apt, pacman, dnf). Exiting."
-    exit 1
-fi
 
 # Function to run user-level scripts
 run_user_tasks() {
@@ -202,6 +186,22 @@ main_menu() {
     done
 }
 
+# Trap SIGINT and SIGTERM to execute the cleanup function
+trap cleanup SIGINT SIGTERM
+
+# Define the input configuration directory
+INPUT_DIR="./config"
+
+# Define the output directory for system info
+OUTPUT_DIR="./system_reports"
+
+# Detect the package manager
+PACKAGE_MANAGER=$(detect_package_manager)
+
+if [ "$PACKAGE_MANAGER" = "unsupported" ]; then
+    echo "No supported package manager found (apt, pacman, dnf). Exiting."
+    exit 1
+fi
 
 # Wait for any ongoing package operations to finish
 wait_for_package_manager "$PACKAGE_MANAGER"
@@ -209,10 +209,10 @@ wait_for_package_manager "$PACKAGE_MANAGER"
 # Install Script dependencies
 install_dependencies "$PACKAGE_MANAGER"
 
+echo "Dependencies installed successfully."
+
 # Remove traps after critical operations
 trap - SIGINT SIGTERM
-
-echo "Dependencies installed successfully."
 
 # Start the main menu
 main_menu

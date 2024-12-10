@@ -1,0 +1,99 @@
+= Hybrid Kubernetes Server Setup: N305 and Mac Mini Integration
+
+== Overview
+This document outlines the comparison between Intel N305-based nodes and Apple Mac Mini configurations, explores the possibilities of building a hybrid server setup, and provides a phased plan for creating a heterogeneous Kubernetes cluster. The goal is to establish a flexible, cost-effective environment for experimentation and scalable workloads.
+
+== N305 vs. Apple Mac Mini: Server Comparison
+
+=== Configuration Details
+[cols="30,35,35", options="header"]
+|===
+| Component               | Intel N305-Based Node              | Mac Mini with M2 (Base Model)
+| Processor               | Intel N305 (8 E-cores)             | Apple M2 (4 P-cores, 4 E-cores)
+| RAM                     | 32GB DDR5                          | 8GB Unified Memory
+| Storage                 | 4TB NVMe SSD                       | 512GB SSD
+| Networking              | 2.5 Gbps Ethernet (native)         | 1 Gbps Ethernet + USB-to-2.5 Gbps Adapter (~€40)
+| Price                   | ~€625                              | ~€814 (including adapter)
+| Power Efficiency        | ~15W TDP                           | ~10W typical under load
+|===
+
+=== Performance Comparison
+
+==== Single-Core Performance
+- **Mac Mini Advantage**: The M2’s high single-threaded performance makes it ideal for tasks like OCR pipelines, scientific calculations, and bursty web services.
+- **Intel N305 Limitation**: While capable, its efficient cores cannot match the M2’s performance in single-threaded scenarios.
+
+==== Multi-Core Performance
+- **Intel N305 Advantage**: Its 8 E-cores provide strong parallel processing capabilities for lightweight, multi-threaded workloads like containerized applications and distributed services.
+- **Mac Mini Limitation**: The hybrid architecture (4 P-cores + 4 E-cores) offers solid performance but at a higher cost for scaling to memory- or storage-intensive tasks.
+
+=== Use Cases
+- **N305 Nodes**:
+  - Best for general-purpose workloads, databases, and memory-intensive applications.
+  - Scalable and cost-effective.
+- **Mac Minis**:
+  - Ideal for specialized tasks requiring high single-threaded performance or ARM optimizations.
+  - Power-efficient for sustained use in environments with constrained power budgets.
+
+== Hybrid Server Setup: N305 and Mac Mini
+
+=== Rationale for a Hybrid Setup
+- Combining **N305 nodes** with **Mac Minis** allows leveraging the strengths of both architectures:
+  - N305 excels in parallel workloads and cost efficiency.
+  - Mac Mini (M1/M2) provides strong single-threaded performance and energy efficiency.
+
+=== Workload Distribution
+[cols="30,70", options="header"]
+|===
+| Node Type           | Ideal Workloads
+| N305 Nodes          | General-purpose workloads, databases, parallel jobs.
+| M1 Mac Mini         | Single-threaded jobs, ARM-optimized tasks.
+| M2 Mac Minis        | High-performance ARM workloads, scientific calculations.
+|===
+
+== Phased Plan for Kubernetes Cluster Deployment
+
+=== Phase 1: Core Kubernetes Cluster
+- **Nodes**: 3 N305 nodes (1 control plane + 2 worker nodes).
+- **Focus**:
+  - Establish a standard Kubernetes cluster.
+  - Deploy general-purpose workloads.
+  - Experiment with container orchestration, scaling, and fault tolerance.
+
+=== Phase 2: Add M1 Mac Mini
+- **Setup**:
+  - Integrate the existing M1 Mac Mini as a worker node.
+  - Install **Linux (e.g., AlmaLinux)** or use macOS for ARM-specific workloads.
+  - Label the M1 node (`hardware=arm64`) to schedule ARM-compatible workloads.
+- **Focus**:
+  - Test multi-architecture container builds (`amd64` and `arm64`).
+  - Validate the M1’s performance for specialized tasks.
+
+=== Phase 3: Expand with M2 Mac Minis
+- **Setup**:
+  - Add 2 M2 Mac Minis to the cluster.
+  - Reserve them for CPU-intensive tasks or lightweight services requiring high single-thread performance.
+- **Focus**:
+  - Explore scheduling workloads across heterogeneous nodes.
+  - Test resource allocation using taints, tolerations, and affinity rules.
+
+=== Phase 4: Scale with Additional N305 Node
+- **Setup**:
+  - Add a fourth N305 node to expand x86 compute capacity.
+- **Focus**:
+  - Compare ARM and x86 performance.
+  - Simulate larger-scale workload distribution and hybrid cloud scenarios.
+
+== Advanced Experimentation
+- **Multi-Architecture Containers**:
+  - Build and deploy containers compatible with both ARM and x86 architectures.
+- **Resource Allocation**:
+  - Use taints, tolerations, and affinity rules to allocate tasks based on node capabilities.
+- **Failure Scenarios**:
+  - Test node failure handling in a heterogeneous environment.
+- **Performance Analysis**:
+  - Measure single-threaded vs. multi-threaded performance across different node types.
+
+== Conclusion
+This phased approach allows for building a scalable, heterogeneous Kubernetes cluster that balances cost, performance, and flexibility. Starting with the N305 nodes ensures a solid foundation, while adding Mac Minis introduces specialized capabilities for advanced workloads. The setup serves as a robust platform for experimentation and real-world workload simulation.
+

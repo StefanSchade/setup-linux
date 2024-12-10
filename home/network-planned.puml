@@ -1,0 +1,123 @@
+@startuml
+title Future Network Layout with VLAN Segmentation
+
+skinparam component {
+    BackgroundColor Khaki
+    BorderColor Black
+    FontColor Black
+}
+
+
+rectangle "Router" as Router {
+    [**ID: 01**\nSpeedport Smart 3] as Router_Device
+}
+
+
+rectangle "Firewall                            " as FW_Domain {
+	rectangle "**ID: 02                                **\nN100                                 " as FW #Khaki {
+    		circle "WAN (ETH0)" as FW_ETH_WAN
+    		circle "Office (ETH1)" as FW_ETH_Office
+    		circle "Media (ETH2)" as FW_ETH_Media
+    		circle "Central (ETH3)" as FW_ETH_Central
+    		circle "Servers (ETH4)" as FW_ETH_Servers
+    		circle "unused (ETH5)" as FW_ETH_free
+	}
+}
+
+rectangle "Office Network" as Office {
+  	
+    [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
+
+    [**ID: 04:**\nMac Mini] as PC_Mac
+    [**ID: 05:**\nZotac Nano AQ01] as PC_Zotac
+    [**ID: 06:**\nMNBOXCONET (N305)] as PC_MNBOX
+
+    rectangle "Docking Station" as Dock {
+        [**ID: 07:**\nLatitude 5521 (Work)] as Dock_Latitude
+        [**ID: 08:**\nDell G16 Laptop] as Dock_G16
+    }
+
+    rectangle "Loose Network Cable" as LooseCable {
+        [**ID: 09:**\nLenovo 430s Laptop] as Cable_Lenovo
+        [**ID: 10:**\nSony Vaio Laptop] as Cable_Sony
+    }
+}
+
+rectangle "Media Network" as Media {
+	
+    [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear] as SWITCH_MEDIA
+
+    [**ID: 12:**\nZotac Nano CI302\nMedia Player] as Media_Zotac
+    [**ID: 13**\nHama\nInternet Radio] as Media_Radio
+    [**ID: 14**\nSamsung\nSmart TV] as Media_TV
+}
+
+rectangle "Central Network" as Central {
+	
+    [**ID: 15:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_CENTRAL
+
+    [**ID: 16**\nHP Smart Tank Plus 5105\nPrinter] as Central_Printer
+    [**ID: 17**\nQNAP 419 PII\nNAS] as Central_NAS
+}
+
+rectangle "Server Network (2.5Gbps)" as ServerNet {
+
+    [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
+
+    rectangle "VLAN 40: Production Services" as VLAN40 {
+        [**ID: 19**\nGlovary N305\nKubernetes Node 1] as Server1
+        [**ID: 20**\nGlovary N305\nKubernetes Node 2] as Server2
+        [**ID: 21**\nGlovary N305\nKubernetes Node 3] as Server3
+    }
+    rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 {
+        [**ID: 22**\nFujitsu Futuro 930\nMaintenance Server] as Maintenance_Server
+    }
+    rectangle "VLAN 60: Storage/Backup" as VLAN60 {
+        [***ID: 23**\nTerramaster F4-423\nNAS] as NAS_Storage
+    }
+}
+
+
+
+Router_Device -- FW_ETH_WAN
+
+FW_ETH_WAN -[hidden]- FW_ETH_Office
+FW_ETH_WAN -[hidden]- FW_ETH_Media
+FW_ETH_WAN -[hidden]- FW_ETH_Central
+FW_ETH_WAN -[hidden]- FW_ETH_Servers
+FW_ETH_WAN -[hidden]- FW_ETH_free
+
+FW_ETH_Office -- SWITCH_OFFICE
+FW_ETH_Media -- SWITCH_MEDIA
+FW_ETH_Central -- SWITCH_CENTRAL
+FW_ETH_Servers -- SWITCH_SERVERS
+
+SWITCH_OFFICE -- PC_Mac
+SWITCH_OFFICE -- PC_Zotac
+SWITCH_OFFICE -- PC_MNBOX
+SWITCH_OFFICE -- Dock
+SWITCH_OFFICE -- LooseCable
+
+Dock -.- Dock_Latitude
+Dock -.- Dock_G16
+
+LooseCable -.- Cable_Lenovo
+LooseCable -.- Cable_Sony
+
+SWITCH_MEDIA -- Media_Zotac
+SWITCH_MEDIA -- Media_Radio
+SWITCH_MEDIA -- Media_TV
+
+SWITCH_CENTRAL -- Central_Printer
+SWITCH_CENTRAL -- Central_NAS
+
+SWITCH_SERVERS -- VLAN40 : Production Services
+SWITCH_SERVERS -- VLAN50 : Maintenance and Diagnostics
+SWITCH_SERVERS -- VLAN60 : Storage/Backup
+
+' note top of ServerNet : VLANs logically isolate server functions.
+note top of FW_ETH_free : Might later be used to connect WLAN extenders
+
+
+@enduml
+
