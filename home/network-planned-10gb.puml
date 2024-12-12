@@ -30,8 +30,8 @@ rectangle "Firewall                            " as FW_Domain {
 rectangle "Media Network" as Media {
 	
     [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear] as SWITCH_MEDIA
+    [**ID: 30:**\nGovary N302\nMedia Player] as Media_Glovary
 
-    [**ID: 12:**\nZotac Nano CI302\nMedia Player] as Media_Zotac
     [**ID: 13**\nHama\nInternet Radio] as Media_Radio
     [**ID: 14**\nSamsung\nSmart TV] as Media_TV
 }
@@ -49,6 +49,7 @@ rectangle "Office Network" as Office {
     [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
 
     [**ID: 05:**\nZotac Nano AQ01] as PC_Zotac
+    [**ID: 12:**\nZotac Nano CI302\nMini PC] as Media_Zotac
 
     rectangle "Kubernetes Cluster2" as K8s2 #Darkgrey {
         [**ID: 04:**\nMac Mini] as PC_Mac
