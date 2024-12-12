@@ -27,25 +27,6 @@ rectangle "Firewall                            " as FW_Domain {
 	}
 }
 
-rectangle "Office Network" as Office {
-  	
-    [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
-
-    [**ID: 04:**\nMac Mini] as PC_Mac
-    [**ID: 05:**\nZotac Nano AQ01] as PC_Zotac
-    [**ID: 06:**\nMNBOXCONET (N305)] as PC_MNBOX
-
-    rectangle "Docking Station" as Dock {
-        [**ID: 07:**\nLatitude 5521 (Work)] as Dock_Latitude
-        [**ID: 08:**\nDell G16 Laptop] as Dock_G16
-    }
-
-    rectangle "Loose Network Cable\n(used for temporary connections)" as LooseCable {
-        [**ID: 09:**\nLenovo 430s Laptop] as Cable_Lenovo
-        [**ID: 10:**\nSony Vaio Laptop] as Cable_Sony
-    }
-}
-
 rectangle "Media Network" as Media {
 	
     [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear] as SWITCH_MEDIA
@@ -63,12 +44,43 @@ rectangle "Central Network" as Central {
     [**ID: 17**\nQNAP 419 PII\nNAS] as Central_NAS
 }
 
+rectangle "Office Network" as Office {
+  	
+    [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
+
+    [**ID: 05:**\nZotac Nano AQ01] as PC_Zotac
+
+    rectangle "Kubernetes Cluster2" as K8s2 #Darkgrey {
+        [**ID: 04:**\nMac Mini] as PC_Mac
+    	[**ID: 06:**\nMNBOXCONET (N305)] as PC_MNBOX
+    }	
+
+    rectangle "Docking Station" as Dock {
+        [**ID: 07:**\nLatitude 5521 (Work)] as Dock_Latitude
+        [**ID: 08:**\nDell G16 Laptop] as Dock_G16
+    }
+
+    rectangle "Loose Network Cable\n(used for temporary connections)" as LooseCable {
+        [**ID: 09:**\nLenovo 430s Laptop] as Cable_Lenovo
+        [**ID: 10:**\nSony Vaio Laptop] as Cable_Sony
+    }
+}
+
+
 rectangle "Server Network (2.5Gbps)" as ServerNet {
 
     [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
 
+     rectangle "VLAN 60: Storage/Backup" as VLAN60 #LightBlue {
+        [***ID: 24**\nTerramaster F4-423\nNAS] as NAS_Storage
+     }
+
+     rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
+        [**ID: 23**\nFujitsu Futuro 930\nMaintenance Server] as Maintenance_Server
+    }
+
     rectangle "Kubernetes Cluster" as K8s #Darkgrey {
-	    rectangle "VLAN 40: Production Services" as VLAN40 #Coral {
+	    rectangle "VLAN 40: Production Services" as VLAN40 #LightCoral {
 		rectangle "Cluster Network (10Gbps)" as ClusterNet #White {
     			folder "Distributed File System (DFS)\ne.g. Longhorn or Ceph" as DFS
         		[**ID: 25**\nSwitch (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
@@ -79,18 +91,13 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
         		[**ID: 26**\nMac Mini M4\nKubernetes Node 5] as Cluster_Node_5 #White
         		[**ID: 27**\nMac Mini M4\nKubernetes Node 6] as Cluster_Node_6 #White
 		}
-	        [**ID: 30**\nFujitsu Futuro 930\nWeb Server] as Web_Server #White
-		folder "Local Storage\n(internal or\nUSB)" as local_storage
+		rectangle "hypothetical: no benefit\nto outweight the \ndisturbtion of 10GBit/s-net" as hypothetical #White {
+	            [**ID: 30**\nFujitsu Futuro 930\nWeb Server] as Web_Server #White
+		    folder "Local Storage\n(internal or\nUSB)" as local_storage
+		}
     	  }
      }
 
-     rectangle "VLAN 60: Storage/Backup" as VLAN60 #CornflowerBlue {
-        [***ID: 24**\nTerramaster F4-423\nNAS] as NAS_Storage
-     }
-
-     rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #DarkGreen {
-        [**ID: 23**\nFujitsu Futuro 930\nMaintenance Server] as Maintenance_Server
-    }
 }
 
 Router_Device -- SWITCH_REPEATER
