@@ -162,11 +162,11 @@ SWITCH_SERVERS -- Maintenance_Server
 SWITCH_SERVERS -- Monitoring_Server
 SWITCH_SERVERS -- Web_Server 
 SWITCH_SERVERS -- NAS_Storage 
-SWITCH_SERVERS -- Cluster_Host_1
-SWITCH_SERVERS -- Cluster_Host_2
-SWITCH_SERVERS -- Cluster_Host_3
-SWITCH_SERVERS -- Cluster_Host_4
-SWITCH_SERVERS -- PC_MNBOX
+Monitoring_Server -- Cluster_Host_1
+Monitoring_Server -- Cluster_Host_2
+Monitoring_Server -- Cluster_Host_3
+Monitoring_Server -- Cluster_Host_4
+Monitoring_Server -- PC_MNBOX
 
 Web_Server ... local_storage
 
@@ -214,7 +214,7 @@ K8s ... NAS_Storage: provides storage, hosts docker registry
 
 
 ' note top of ServerNet : VLANs logically isolate server functions.
-note top of FW_ETH_FREE : Might later be used to connect WLAN extenders
+note top of FW_ETH_FREE : The Firwall will be a VM on a N305 - another VM on that device will get passthrough to this port and be connected to the central services subdomain and provide DNS Services and Add blocking. This is not shown as the image is comlex enough already
 
 note top of SWITCH_REPEATER : WLAN Traffic is not routed via the firewall as it is handled by the router anyway
 
