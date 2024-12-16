@@ -1,0 +1,157 @@
+@startuml
+title Future Network Layout with VLAN Segmentation (Firewall VM)
+
+skinparam maxWidth 2000
+skinparam maxHeight 900
+scale 0.7
+
+skinparam component {
+    BackgroundColor Khaki
+    BorderColor Black
+    FontColor Black
+}
+
+rectangle "Router" as Router {
+    [**ID: 01**\nSpeedport Smart 3] as ROUTER_DEVICE
+}
+
+[**ID: 28**\nSwitch (1 Gps, 5 Ports)\nTP-Link TL-SG1005D] as SWITCH_REPEATER
+
+[**ID: 29**\nWLAN Access Point\nTP-Link TL-WA1201] as REPEATER
+
+rectangle "Firewall Server (Glovary N305)" as DOMAIN_FIREWALL {
+    rectangle "Firewall (VM)\nRoles: NAT, Routing, Firewall\nInterface: WAN to Subnets" as FW_VM #LightCoral
+    rectangle "DNS/Ad Blocker (VM)\nRoles: DNS Resolver, Ad Blocking\nInterface: Shared with Host" as DNS_AD_VM #LightBlue
+    rectangle "Host System\nRoles: VM Hypervisor, Maintenance" as FW_HOST #LightGreen
+
+    FW_VM -- FW_ETH_WAN : WAN
+    FW_VM -- FW_ETHERNET_OFFICE : Office
+    FW_VM -- FW_ETHERNET_MEDIA : Media
+    FW_VM -- FW_ETH_CENTRAL : Central
+    FW_VM -- FW_ETH_SERVERS : Servers
+    FW_HOST -- FW_ETH_FREE : Shared Port
+
+    DNS_AD_VM -[hidden]- FW_HOST
+}
+
+rectangle "Media Network" as Media {
+    [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear GS105E] as SWITCH_MEDIA
+    [**ID: 30:**\nGovary N305\nMedia Player] as MEDIAPLAYER_GLOVARY_N305
+
+    [**ID: 13**\nInternet Radio\nHama] as Media_Radio
+    [**ID: 14**\nSmart TV\nSamsung\n] as Media_TV
+}
+
+rectangle "Central Network" as Central {
+    [**ID: 15:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_CENTRAL
+    [**ID: 16**\nPrinter\nHP Smart Tank Plus 5105] as Central_Printer
+    [**ID: 17**\nNAS (1 GBit/s, 4x4TB)\nQNAP 419 PII\n] as Central_NAS
+}
+
+rectangle "Office Network" as Office {
+    [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
+    [**ID: 05:**\nMini PC\nZotac Nano AQ01] as PC_Zotac
+    [**ID: 12:**\nMini PC\nZotac Nano CI520] as Media_Zotac
+
+    rectangle "Kubernetes Cluster2" as K8s2 #Darkgrey {
+        [**ID: 04:**\nMini PC\nMac Mini (2020)] as PC_Mac
+        [**ID: 06:**\nMini PC\nMNBOXCONET N305] as PC_MNBOX
+    }
+
+    rectangle "Docking Station" as Dock {
+        [**ID: 07:**\nLatitude 5521 (Work)] as Dock_Latitude
+        [**ID: 08:**\nDell G16 Laptop] as Dock_G16
+    }
+
+    rectangle "Loose Network Cable\n(used for temporary connections)" as LooseCable {
+        [**ID: 09:**\nLenovo 430s Laptop] as Cable_Lenovo
+        [**ID: 10:**\nSony Vaio Laptop] as Cable_Sony
+    }
+}
+
+rectangle "Server Network (2.5Gbps)" as ServerNet {
+    [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
+
+     rectangle "VLAN 60: Storage/Backup" as VLAN60 #LightBlue {
+        [***ID: 24**\nNAS (2.5 GBit/s, 4x8TB)\nTerramaster F4-423] as NAS_Storage
+     }
+
+     rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
+        [**ID: 23**\nFujitsu Futuro 930\nMaintenance Server] as Maintenance_Server
+        [**ID: 31**\nGlovary N305\nMonitoring Server] as Monitoring_Server
+    }
+
+    rectangle "VLAN 70: Cluster Host" as HOST {
+        [**ID: 38**\nMNBOXCONET N305\nPromox]	as Cluster_Host_1
+        [**ID: 39**\nMNBOXCONET N305\nPromox]	as Cluster_Host_2
+        [**ID: 40**\nMNBOXCONET N305\nPromox]	as Cluster_Host_3
+        [**ID: 41**\nMNBOXCONET N305\nPromox]	as Cluster_Host_4
+    }
+
+    rectangle "Kubernetes Cluster" as K8s #Darkgrey {
+	    rectangle "VLAN 40: Production Services" as VLAN40 #LightCoral {
+		rectangle "Cluster Network (10Gbps)" as ClusterNet #White {
+    			folder "Distributed File System (DFS)\ne.g. Longhorn or Ceph" as DFS
+        		[**ID: 25**\nSwitch (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
+        		[**ID: 19**\nVM (N305)\nK8s Node 01] as Cluster_Node_01
+        		[**ID: 20**\nVM (N305)\nK8s Node 02] as Cluster_Node_02
+        		[**ID: 21**\nVM (N305)\nK8s Node 03] as Cluster_Node_03
+        		[**ID: 22**\nVM (N305)\nK8s Node 04] as Cluster_Node_04
+         		[**ID: 32**\nVM (N305)\nK8s Node 05] as Cluster_Node_05
+        		[**ID: 33**\nVM (N305)\nK8s Node 06] as Cluster_Node_06
+        		[**ID: 34**\nVM (N305)\nK8s Node 07] as Cluster_Node_07
+        		[**ID: 35**\nVM (N305)\nK8s Node 08] as Cluster_Node_08
+        		[**ID: 36**\nVM (N305)\nK8s Node 09] as Cluster_Node_09
+        		[**ID: 37**\nVM (N305)\nK8s Node 10] as Cluster_Node_10
+		}
+    	  }
+     }
+}
+
+ROUTER_DEVICE -- SWITCH_REPEATER
+SWITCH_REPEATER -- REPEATER
+SWITCH_REPEATER -- FW_ETH_WAN
+
+FW_ETH_WAN -[hidden]- FW_ETHERNET_OFFICE
+FW_ETH_WAN -[hidden]- FW_ETHERNET_MEDIA
+FW_ETH_WAN -[hidden]- FW_ETH_CENTRAL
+FW_ETH_WAN -[hidden]- FW_ETH_SERVERS
+FW_ETH_WAN -[hidden]- FW_ETH_FREE
+
+SWITCH_OFFICE -- PC_Mac
+SWITCH_OFFICE -- PC_Zotac
+SWITCH_OFFICE -- PC_MNBOX
+SWITCH_OFFICE -- Dock
+SWITCH_OFFICE -- LooseCable : Optional connection
+
+LooseCable .- Cable_Lenovo : Ad-hoc
+LooseCable .- Cable_Sony : Ad-hoc
+
+Dock -.- Dock_Latitude : Option 1
+Dock -.- Dock_G16 : Option 2
+
+SWITCH_MEDIA -- Media_Zotac
+SWITCH_MEDIA -- Media_Radio
+SWITCH_MEDIA -- Media_TV
+SWITCH_MEDIA -- MEDIAPLAYER_GLOVARY_N305
+
+SWITCH_CENTRAL -- Central_Printer
+SWITCH_CENTRAL -- Central_NAS
+
+SWITCH_SERVERS -- SWITCH_CLUSTER
+SWITCH_SERVERS -- Maintenance_Server 
+SWITCH_SERVERS -- Monitoring_Server
+SWITCH_SERVERS -- NAS_Storage 
+Monitoring_Server -- Cluster_Host_1
+Monitoring_Server -- Cluster_Host_2
+Monitoring_Server -- Cluster_Host_3
+Monitoring_Server -- Cluster_Host_4
+
+SWITCH_CLUSTER -- Cluster_Node_01
+SWITCH_CLUSTER -- Cluster_Node_02
+SWITCH_CLUSTER -- Cluster_Node_03
+SWITCH_CLUSTER -- Cluster_Node_04
+
+DFS ... NAS_Storage: Backup integration
+@enduml
+
