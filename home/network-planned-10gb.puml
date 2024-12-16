@@ -11,7 +11,6 @@ skinparam component {
     FontColor Black
 }
 
-
 rectangle "Router" as Router {
     [**ID: 01**\nSpeedport Smart 3] as ROUTER_DEVICE
 }
@@ -32,7 +31,6 @@ rectangle "Firewall" as DOMAIN_FIREWALL {
 }
 
 rectangle "Media Network" as Media {
-	
     [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear GS105E] as SWITCH_MEDIA
     [**ID: 30:**\nGovary N305\nMedia Player] as MEDIAPLAYER_GLOVARY_N305
 
@@ -41,24 +39,20 @@ rectangle "Media Network" as Media {
 }
 
 rectangle "Central Network" as Central {
-	
     [**ID: 15:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_CENTRAL
-
     [**ID: 16**\nPrinter\nHP Smart Tank Plus 5105] as Central_Printer
     [**ID: 17**\nNAS (1 GBit/s, 4x4TB)\nQNAP 419 PII\n] as Central_NAS
 }
 
 rectangle "Office Network" as Office {
-  	
     [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
-
     [**ID: 05:**\nMini PC\nZotac Nano AQ01] as PC_Zotac
     [**ID: 12:**\nMini PC\nZotac Nano CI520] as Media_Zotac
 
     rectangle "Kubernetes Cluster2" as K8s2 #Darkgrey {
         [**ID: 04:**\nMini PC\nMac Mini (2020)] as PC_Mac
     	[**ID: 06:**\nMini PC\nMNBOXCONET N305] as PC_MNBOX
-    }	
+    }
 
     rectangle "Docking Station" as Dock {
         [**ID: 07:**\nLatitude 5521 (Work)] as Dock_Latitude
@@ -71,13 +65,11 @@ rectangle "Office Network" as Office {
     }
 }
 
-
 rectangle "Server Network (2.5Gbps)" as ServerNet {
-
     [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
 
      rectangle "VLAN 60: Storage/Backup" as VLAN60 #LightBlue {
-        [***ID: 24**\nNAS (2,5 GBit/s, 4x8TB)\nTerramaster F4-423] as NAS_Storage
+        [***ID: 24**\nNAS (2.5 GBit/s, 4x8TB)\nTerramaster F4-423] as NAS_Storage
      }
 
      rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
@@ -107,16 +99,9 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
         		[**ID: 35**\nVM (N305)\nK8s Node 08] as Cluster_Node_08
         		[**ID: 36**\nVM (N305)\nK8s Node 09] as Cluster_Node_09
         		[**ID: 37**\nVM (N305)\nK8s Node 10] as Cluster_Node_10
-        		[**ID: 26**\nHigh Perf. CPU\nFuture K8s Node] as Cluster_Node_98 #White
-        		[**ID: 27**\nHigh Perf. CPU\nFuture K8s Node] as Cluster_Node_99 #White
-		}
-		rectangle "hypothetical: no benefit\nto outweight the \ndisturbtion of 10GBit/s-net" as hypothetical #White {
-	            [**ID: 30**\nFujitsu Futuro 930\nWeb Server] as Web_Server #White
-		    folder "Local Storage\n(internal or\nUSB)" as local_storage
 		}
     	  }
      }
-
 }
 
 ROUTER_DEVICE -- SWITCH_REPEATER
@@ -149,74 +134,25 @@ Dock -.- Dock_G16 : Option 2
 SWITCH_MEDIA -- Media_Zotac
 SWITCH_MEDIA -- Media_Radio
 SWITCH_MEDIA -- Media_TV
+SWITCH_MEDIA -- MEDIAPLAYER_GLOVARY_N305
 
 SWITCH_CENTRAL -- Central_Printer
 SWITCH_CENTRAL -- Central_NAS
 
-SWITCH_SERVERS -[hidden]- VLAN40 : Production Services
-SWITCH_SERVERS -[hidden]- VLAN50 : Maintenance and Diagnostics
-SWITCH_SERVERS -[hidden]- VLAN60 : Storage/Backup
-
 SWITCH_SERVERS -- SWITCH_CLUSTER
 SWITCH_SERVERS -- Maintenance_Server 
 SWITCH_SERVERS -- Monitoring_Server
-SWITCH_SERVERS -- Web_Server 
 SWITCH_SERVERS -- NAS_Storage 
 Monitoring_Server -- Cluster_Host_1
 Monitoring_Server -- Cluster_Host_2
 Monitoring_Server -- Cluster_Host_3
 Monitoring_Server -- Cluster_Host_4
-Monitoring_Server -- PC_MNBOX
-
-Web_Server ... local_storage
 
 SWITCH_CLUSTER -- Cluster_Node_01
 SWITCH_CLUSTER -- Cluster_Node_02
 SWITCH_CLUSTER -- Cluster_Node_03
 SWITCH_CLUSTER -- Cluster_Node_04
-SWITCH_CLUSTER -- Cluster_Node_05
-SWITCH_CLUSTER -- Cluster_Node_06
-SWITCH_CLUSTER -- Cluster_Node_07
-SWITCH_CLUSTER -- Cluster_Node_08
-SWITCH_CLUSTER -- Cluster_Node_09
-SWITCH_CLUSTER -- Cluster_Node_10
-SWITCH_CLUSTER -- Cluster_Node_98
-SWITCH_CLUSTER -- Cluster_Node_99
 
-SWITCH_CLUSTER ----- PC_MNBOX : direct cluster \n access 10 GBit/s
-
-Cluster_Host_1 .-.-. Cluster_Node_01
-Cluster_Host_1 .-.-. Cluster_Node_02
-Cluster_Host_2 .-.-. Cluster_Node_03
-Cluster_Host_2 .-.-. Cluster_Node_04
-Cluster_Host_3 .-.-. Cluster_Node_05
-Cluster_Host_3 .-.-. Cluster_Node_06
-Cluster_Host_4 .-.-. Cluster_Node_07
-Cluster_Host_4 .-.-. Cluster_Node_08
-PC_MNBOX .-.-. Cluster_Node_09
-PC_MNBOX .-.-. Cluster_Node_10
-
-
-DFS ... Cluster_Node_01
-DFS ... Cluster_Node_02
-DFS ... Cluster_Node_03
-DFS ... Cluster_Node_04
-DFS ... Cluster_Node_05
-DFS ... Cluster_Node_06
-DFS ... Cluster_Node_07
-DFS ... Cluster_Node_08
-DFS ... Cluster_Node_09
-DFS ... Cluster_Node_98
-DFS ... Cluster_Node_99
-DFS ... NAS_Storage: backup
-
-K8s ... NAS_Storage: provides storage, hosts docker registry
-
-
-' note top of ServerNet : VLANs logically isolate server functions.
-note top of FW_ETH_FREE : The Firwall will be a VM on a N305 - another VM on that device will get passthrough to this port and be connected to the central services subdomain and provide DNS Services and Add blocking. This is not shown as the image is comlex enough already
-
-note top of SWITCH_REPEATER : WLAN Traffic is not routed via the firewall as it is handled by the router anyway
-
+DFS ... NAS_Storage: Backup integration
 @enduml
 
