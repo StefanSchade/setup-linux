@@ -19,7 +19,7 @@ rectangle "Router" as Router {
 
 [**ID: 29**\nWLAN Access Point\nTP-Link TL-WA1201] as REPEATER
 
-rectangle "Firewall Server (Glovary N305)" as DOMAIN_FIREWALL {
+rectangle "Firewall Server (Glovary N305)" as DOMAIN_FIREWALL #LightGrey {
     rectangle "Firewall (VM)\nRoles: NAT, Routing, Firewall\nInterface: WAN to Subnets" as FW_VM #LightCoral
     rectangle "DNS/Ad Blocker (VM)\nRoles: DNS Resolver, Ad Blocking\nInterface: Shared with Host" as DNS_AD_VM #LightBlue
     rectangle "Host System\nRoles: VM Hypervisor, Maintenance" as FW_HOST #LightGreen
