@@ -1,0 +1,75 @@
+@startuml
+title Future Network Layout with VLAN Segmentation
+
+skinparam maxWidth 2000
+skinparam maxHeight 900
+scale 0.7
+
+skinparam component {
+    BackgroundColor Khaki
+    BorderColor Black
+    FontColor Black
+}
+
+rectangle "Router" as Router {
+    [**ID: 01**\nSpeedport Smart 3] as ROUTER_DEVICE
+}
+
+[**ID: 28**\nSwitch (1 Gps, 5 Ports)\nTP-Link TL-SG1005D] as SWITCH_REPEATER
+
+[**ID: 29**\nWLAN Access Point\nTP-Link TL-WA1201] as REPEATER
+
+rectangle "Firewall" as DOMAIN_FIREWALL {
+	rectangle "**ID: 02**\nFirewall\nGlovary N305" as FW_DEVICE #Khaki {
+    		circle "WAN (ETH0)" as FW_ETH_WAN
+    		circle "Office (ETH1)" as FW_ETHERNET_OFFICE
+    		circle "Media (ETH2)" as FW_ETHERNET_MEDIA
+    		circle "Central (ETH3)" as FW_ETH_CENTRAL
+    		circle "Servers (ETH4)" as FW_ETH_SERVERS
+    		circle "DNS (ETH5)" as FW_ETH_FREE
+	}
+}
+
+rectangle "Media Network" as Media {
+    [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear GS105E] as SWITCH_MEDIA
+}
+
+rectangle "Central Network" as Central {
+    [**ID: 15:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_CENTRAL
+}
+
+rectangle "Office Network" as Office {
+    [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
+}
+
+rectangle "Server Network (2.5Gbps)" as ServerNet {
+    [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
+
+    rectangle "Kubernetes Cluster" as K8s #Darkgrey {
+	    rectangle "VLAN 40: Production Services" as VLAN40 #LightCoral {
+		rectangle "Cluster Network (10Gbps)" as ClusterNet #White {
+    			folder "Distributed File System (DFS)\ne.g. Longhorn or Ceph" as DFS
+        		[**ID: 25**\nSwitch (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
+	}
+    	  }
+     }
+}
+
+ROUTER_DEVICE -- SWITCH_REPEATER
+SWITCH_REPEATER -- REPEATER
+SWITCH_REPEATER -- FW_ETH_WAN
+
+FW_ETH_WAN -[hidden]- FW_ETHERNET_OFFICE
+FW_ETH_WAN -[hidden]- FW_ETHERNET_MEDIA
+FW_ETH_WAN -[hidden]- FW_ETH_CENTRAL
+FW_ETH_WAN -[hidden]- FW_ETH_SERVERS
+FW_ETH_WAN -[hidden]- FW_ETH_FREE
+
+FW_ETHERNET_OFFICE --- SWITCH_OFFICE
+FW_ETHERNET_MEDIA --- SWITCH_MEDIA
+FW_ETH_CENTRAL --- SWITCH_CENTRAL
+FW_ETH_SERVERS --- SWITCH_SERVERS
+
+
+@enduml
+

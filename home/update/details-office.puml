@@ -1,0 +1,41 @@
+@startuml
+title Future Network Layout with VLAN Segmentation (Firewall VM)
+
+[Firewall]
+
+rectangle "Office Network" as Office {
+    [**ID: 03:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_OFFICE 
+    [**ID: 05:**\nMini PC\nZotac Nano AQ01] as PC_Zotac
+    [**ID: 04:**\nMini PC\nMac Mini (2020)] as PC_Mac
+
+    rectangle "Can join Kubernetes Cluster or be used interactively" as K8s2 #Darkgrey {
+        [**ID: 06:**\nMini PC\nMNBOXCONET N305] as PC_MNBOX
+    }
+
+    rectangle "Docking Station" as Dock {
+        [**ID: 07:**\nLatitude 5521 (Work)] as Dock_Latitude
+        [**ID: 08:**\nDell G16 Laptop] as Dock_G16
+    }
+
+    rectangle "Loose Network Cable\n(used for temporary connections)" as LooseCable {
+        [**ID: 09:**\nLenovo 430s Laptop] as Cable_Lenovo
+        [**ID: 10:**\nSony Vaio Laptop] as Cable_Sony
+    }
+}
+
+Firewall -- SWITCH_OFFICE
+
+SWITCH_OFFICE -- PC_Mac
+SWITCH_OFFICE -- PC_Zotac
+SWITCH_OFFICE -- PC_MNBOX
+SWITCH_OFFICE -- Dock
+SWITCH_OFFICE -- LooseCable : Optional connection
+
+LooseCable .- Cable_Lenovo : Ad-hoc
+LooseCable .- Cable_Sony : Ad-hoc
+
+Dock -.- Dock_Latitude : Option 1
+Dock -.- Dock_G16 : Option 2
+
+@enduml
+

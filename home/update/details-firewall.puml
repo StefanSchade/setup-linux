@@ -1,0 +1,65 @@
+@startuml
+title Separation of the Firewall server (Box) into VMs and WAN Access
+
+skinparam maxWidth 2000
+skinparam maxHeight 900
+scale 0.7
+
+skinparam component {
+    BackgroundColor Khaki
+    BorderColor Black
+    FontColor Black
+}
+
+rectangle "Router" as Router {
+    [**ID: 01**\nSpeedport Smart 3] as ROUTER_DEVICE
+}
+
+[**ID: 28**\nSwitch (1 Gps, 5 Ports)\nTP-Link TL-SG1005D] as SWITCH_REPEATER
+
+[**ID: 29**\nWLAN Access Point\nTP-Link TL-WA1201] as REPEATER
+
+rectangle "Firewall Server (Glovary N305)" as DOMAIN_FIREWALL {
+    rectangle "Firewall (VM)\nRoles: NAT, Routing, Firewall\nInterface: WAN to Subnets" as FW_VM #LightCoral
+    rectangle "DNS/Ad Blocker (VM)\nRoles: DNS Resolver, Ad Blocking\nInterface: Shared with Host" as DNS_AD_VM #LightBlue
+    rectangle "Host System\nRoles: VM Hypervisor, Maintenance" as FW_HOST #LightGreen
+
+    FW_VM -- FW_ETH_WAN : WAN
+    FW_VM -- FW_ETHERNET_OFFICE : Office
+    FW_VM -- FW_ETHERNET_MEDIA : Media
+    FW_VM -- FW_ETH_CENTRAL : Central
+    FW_VM -- FW_ETH_SERVERS : Servers
+    FW_HOST -- FW_ETH_DNS : Shared Port
+    DNS_AD_VM -- FW_ETH_DNS : Shared Port
+
+    DNS_AD_VM -[hidden]- FW_HOST
+}
+
+[Subnet Media] as SWITCH_MEDIA
+[Subnet Office] as SWITCH_OFFICE
+[Subnet Server] as SWITCH_SERVERS
+[Subnet Central] as SWITCH_CENTRAL
+
+ROUTER_DEVICE -- SWITCH_REPEATER
+SWITCH_REPEATER -- REPEATER
+SWITCH_REPEATER -- FW_ETH_WAN
+
+FW_ETH_WAN -[hidden]- FW_ETHERNET_OFFICE
+FW_ETH_WAN -[hidden]- FW_ETHERNET_MEDIA
+FW_ETH_WAN -[hidden]- FW_ETH_CENTRAL
+FW_ETH_WAN -[hidden]- FW_ETH_SERVERS
+FW_ETH_WAN -[hidden]- FW_ETH_DNS
+
+FW_ETH_CENTRAL -- SWITCH_CENTRAL
+FW_ETHERNET_OFFICE -- SWITCH_OFFICE
+FW_ETHERNET_MEDIA -- SWITCH_MEDIA
+FW_ETH_SERVERS -- SWITCH_SERVERS
+
+
+'FW_ETH_DNS -.-.- SWITCH_MEDIA : DNS requests via HTTP/S
+'FW_ETH_DNS -.-.- SWITCH_OFFICE : DNS requests via HTTP/S
+'FW_ETH_DNS -.-.- SWITCH_SERVERS : DNS requests via HTTP/S
+FW_ETH_DNS -.-.- SWITCH_CENTRAL : DNS VM member of Subnet "Central" 
+
+@enduml
+

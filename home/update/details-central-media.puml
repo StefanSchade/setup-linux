@@ -1,0 +1,42 @@
+@startuml
+title Future Network Layout with VLAN Segmentation (Firewall VM)
+
+[Firewall]
+
+skinparam component {
+    BackgroundColor Khaki
+    BorderColor Black
+    FontColor Black
+}
+
+rectangle "Media Network" as Media {
+    [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear GS105E] as SWITCH_MEDIA
+    [**ID: 30:**\nZotac Nano CI520\nMedia Player] as MEDIAPLAYER_GLOVARY_N305
+
+    [**ID: 13**\nInternet Radio\nHama] as Media_Radio
+    [**ID: 14**\nSmart TV\nSamsung\n] as Media_TV
+}
+
+rectangle "Central Network" as Central {
+    [**ID: 15:**\nSwitch (1 Gbps, 8 Ports)\nTP-Link TL-SG108] as SWITCH_CENTRAL
+    [**ID: 16**\nPrinter\nHP Smart Tank Plus 5105] as Central_Printer
+    [**ID: 17**\nNAS (1 GBit/s, 4x4TB)\nQNAP 419 PII\n] as Central_NAS
+    [**ID: 23**\nFujitsu Futuro 930\nMaintenance_Server] as Maintenance
+    [**ID: 60**\niDNS Server\nRuns as VM on Firewall Server] as Dns
+    
+}
+
+Firewall -- SWITCH_CENTRAL
+Firewall -- SWITCH_MEDIA
+
+SWITCH_MEDIA -- Media_Radio
+SWITCH_MEDIA -- Media_TV
+SWITCH_MEDIA -- MEDIAPLAYER_GLOVARY_N305
+
+SWITCH_CENTRAL -- Central_Printer
+SWITCH_CENTRAL -- Central_NAS
+SWITCH_CENTRAL -- Maintenance
+SWITCH_CENTRAL -- Dns
+
+@enduml
+

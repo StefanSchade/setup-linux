@@ -1,0 +1,95 @@
+@startuml
+title Future Network Layout with VLAN Segmentation (Firewall VM)
+
+skinparam maxWidth 2000
+skinparam maxHeight 900
+scale 0.7
+
+skinparam component {
+    BackgroundColor Khaki
+    BorderColor Black
+    FontColor Black
+}
+
+[Firewall]
+
+rectangle "Office Network" as OfficeNet {
+        		[**ID: 06**\nMini PC\nMNBOXCONET\nPromox] as PC_MNBOX
+        		[**ID: 36**\nVM (N305)\nK8s Node 09] as Cluster_Node_09
+        		[**ID: 37**\nVM (N305)\nK8s Node 10] as Cluster_Node_10
+} 
+
+rectangle "Server Network (2.5Gbps)" as ServerNet {
+    [**ID: 18:**\nSwitch (2.5 Gbps, 8 Ports)\nKeeplink] as SWITCH_SERVERS
+
+     rectangle "VLAN 60: Storage/Backup" as VLAN60 #LightBlue {
+        [***ID: 24**\nNAS (2.5 GBit/s, 4x8TB)\nTerramaster F4-423] as NAS_Storage
+     }
+
+     rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
+        [**ID: 31**\nGlovary N305\nDevelopment Server] as Development_Server
+    }
+
+    rectangle "VLAN 70: Cluster Host" as HOST {
+        [**ID: 38**\nMNBOXCONET N305\nPromox]	as Cluster_Host_1
+        [**ID: 39**\nMNBOXCONET N305\nPromox]	as Cluster_Host_2
+        [**ID: 40**\nMNBOXCONET N305\nPromox]	as Cluster_Host_3
+        [**ID: 41**\nMINDSFORUM MS-01\nPromox]	as Cluster_Host_4 #White
+    }
+
+    rectangle "Kubernetes Cluster" as K8s #Darkgrey {
+	    rectangle "VLAN 40: Production Services" as VLAN40 #LightCoral {
+		rectangle "Cluster Network (10Gbps)" as ClusterNet #White {
+    			folder "Distributed File System (DFS)\ne.g. Longhorn or Ceph" as DFS
+        		[**ID: 25**\nSwitch 1 (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
+        		[**ID: 49**\nSwitch 2 (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER2 #White
+        		[**ID: 19**\nVM (N305)\nK8s Node 01] as Cluster_Node_01
+        		[**ID: 20**\nVM (N305)\nK8s Node 02] as Cluster_Node_02
+        		[**ID: 21**\nVM (N305)\nK8s Node 03] as Cluster_Node_03
+        		[**ID: 22**\nVM (N305)\nK8s Node 04] as Cluster_Node_04
+         		[**ID: 32**\nVM (N305)\nK8s Node 05] as Cluster_Node_05
+        		[**ID: 33**\nVM (N305)\nK8s Node 06] as Cluster_Node_06
+        		[**ID: 34**\nVM (i9)\nK8s Node 07] as Cluster_Node_07 #White
+        		[**ID: 35**\nVM (i9)\nK8s Node 08] as Cluster_Node_08 #White
+		}
+    	  }
+     }
+}
+SWITCH_SERVERS -- SWITCH_CLUSTER
+SWITCH_CLUSTER -- SWITCH_CLUSTER2
+SWITCH_SERVERS -- Development_Server 
+SWITCH_SERVERS -- NAS_Storage 
+SWITCH_SERVERS -- PC_MNBOX 
+SWITCH_SERVERS -- Cluster_Host_1
+SWITCH_SERVERS -- Cluster_Host_2
+SWITCH_SERVERS -- Cluster_Host_3
+Development_Server -- Cluster_Host_4
+
+SWITCH_CLUSTER --- Cluster_Node_01
+SWITCH_CLUSTER --- Cluster_Node_02
+SWITCH_CLUSTER --- Cluster_Node_03
+SWITCH_CLUSTER --- Cluster_Node_04
+SWITCH_CLUSTER --- Cluster_Node_05
+SWITCH_CLUSTER --- Cluster_Node_06
+SWITCH_CLUSTER2 --- Cluster_Node_07
+SWITCH_CLUSTER2 --- Cluster_Node_08
+SWITCH_CLUSTER --- Cluster_Node_09 : shared interface (no passthrough)
+SWITCH_CLUSTER --- Cluster_Node_10 : shared interface (no passthrough)
+
+Firewall -- SWITCH_SERVERS
+
+DFS ... NAS_Storage: Backup integration
+
+Cluster_Host_1 ..[hidden].. Cluster_Node_01
+Cluster_Host_1 ..[hidden].. Cluster_Node_02 
+Cluster_Host_2 ..[hidden].. Cluster_Node_03 
+Cluster_Host_2 ..[hidden].. Cluster_Node_04 
+Cluster_Host_3 ..[hidden].. Cluster_Node_05
+Cluster_Host_3 ..[hidden].. Cluster_Node_06 
+Cluster_Host_4 ..[hidden].. Cluster_Node_07 
+Cluster_Host_4 ..[hidden].. Cluster_Node_08
+PC_MNBOX .[hidden]. Cluster_Node_09 : VM
+PC_MNBOX .[hidden]. Cluster_Node_10 : VM
+
+@enduml
+
