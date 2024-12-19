@@ -28,13 +28,13 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
 
      rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
         rectangle "**ID: 31**\nVM Host (Glovary N305)" as VM_HOST #LightGrey {
-        	rectangle "**VM**\nNAS Buffer\nFast Backups" as VM_NAS #LightCoral {
-			circle "ETH_2: NAS" as E2	
+        	rectangle "**VM**\nNAS Buffer\nFast Backups\n **option if need arrises**" as VM_NAS #White {
 		}	
         	rectangle "**VM**\n Glovary General Server\nshared with Host System" as VM_GENERAL #LightBlue {
-			circle "ETH_3" as E3
 		}
         	rectangle "**VM**\nGlovary Switch (VM)\nkeeps networking funct. separated\nindependend config and mgmt\nlimit access" as VM_SWITCH #LightGreen {
+			circle "ETH_2" as E2	
+			circle "ETH_3" as E3
 			circle "ETH_4" as E4
 			circle "ETH_5" as E5
 			circle "ETH_6" as E6
@@ -87,7 +87,7 @@ SWITCH_SERVERS -- PC_MNBOX
 E4 -- Cluster_Host_1
 E5 -- Cluster_Host_2
 E6 -- Cluster_Host_3
-SWITCH_SERVERS ---- Cluster_Host_4
+E3 ---- Cluster_Host_4
 
 SWITCH_CLUSTER --- Cluster_Node_01
 SWITCH_CLUSTER --- Cluster_Node_02
