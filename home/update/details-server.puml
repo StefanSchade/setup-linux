@@ -14,9 +14,13 @@ skinparam component {
 [Firewall]
 
 rectangle "Office Network" as OfficeNet {
+	rectangle "MNBOXCONET" as PCMNBOX #line.dashed {
         		[**ID: 06**\nMini PC\nMNBOXCONET\nPromox] as PC_MNBOX
         		[**ID: 36**\nVM (N305)\nK8s Node 09] as Cluster_Node_09
         		[**ID: 37**\nVM (N305)\nK8s Node 10] as Cluster_Node_10
+         }
+
+        [**ID: 04**\nMini PC\nMac Mini (2020)\n8GB 2TB (extern)] as MacMini
 } 
 
 rectangle "Server Network (2.5Gbps)" as ServerNet {
@@ -24,6 +28,7 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
 
      rectangle "VLAN 60: Storage/Backup" as VLAN60 #LightBlue {
         [***ID: 24**\nNAS (2.5 GBit/s, 4x8TB)\nTerramaster F4-423] as NAS_Storage
+        [***ID: 05**\nZotac Nano 520 (2.5 GBit/s)\nNAS Cache] as NAS_Cache
      }
 
      rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
@@ -57,7 +62,8 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
     rectangle "VLAN 70: Cluster Host" as HOST {
         [**ID: 38**\nMNBOXCONET N305\nPromox]	as Cluster_Host_1
         [**ID: 39**\nMNBOXCONET N305\nPromox]	as Cluster_Host_2
-        [**ID: 40**\nMNBOXCONET N305\nPromox]	as Cluster_Host_3
+ '       [**ID: 40**\nMNBOXCONET N305\nPromox]	as Cluster_Host_3
+        [**ID: 40**\nMINDSFORUM MS-01\nPromox]	as Cluster_Host_3 #White
         [**ID: 41**\nMINDSFORUM MS-01\nPromox]	as Cluster_Host_4 #White
     }
 
@@ -65,44 +71,46 @@ rectangle "Server Network (2.5Gbps)" as ServerNet {
 	    rectangle "VLAN 40: Production Services" as VLAN40 #LightCoral {
 		rectangle "Cluster Network (10Gbps)" as ClusterNet #White {
     			folder "Distributed File System (DFS)\ne.g. Longhorn or Ceph" as DFS
-        		[**ID: 25**\nSwitch 1 (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER
-        		[**ID: 49**\nSwitch 2 (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER2 #White
+        		[**ID: 25**\nSwitch (10 Gbps, 12 Ports)\nBinardat 12-Port 10G Web Managed Switch] as SWITCH_CLUSTER
+'        		[**ID: 49**\nSwitch 2 (10 Gbps, 8 Ports)\nSODOLA 8-Port 10G Web Managed Switch] as SWITCH_CLUSTER2 #White
         		[**ID: 19**\nVM (N305)\nK8s Node 01] as Cluster_Node_01
         		[**ID: 20**\nVM (N305)\nK8s Node 02] as Cluster_Node_02
         		[**ID: 21**\nVM (N305)\nK8s Node 03] as Cluster_Node_03
         		[**ID: 22**\nVM (N305)\nK8s Node 04] as Cluster_Node_04
-         		[**ID: 32**\nVM (N305)\nK8s Node 05] as Cluster_Node_05
-        		[**ID: 33**\nVM (N305)\nK8s Node 06] as Cluster_Node_06
+         		[**ID: 32**\nVM (i9)\nK8s Node 05] as Cluster_Node_05 #White
+        		[**ID: 33**\nVM (i9)\nK8s Node 06] as Cluster_Node_06 #White
         		[**ID: 34**\nVM (i9)\nK8s Node 07] as Cluster_Node_07 #White
         		[**ID: 35**\nVM (i9)\nK8s Node 08] as Cluster_Node_08 #White
 		}
     	  }
      }
 }
-SWITCH_SERVERS -- SWITCH_CLUSTER
-SWITCH_CLUSTER -- SWITCH_CLUSTER2
-SWITCH_SERVERS -- E1 
-SWITCH_SERVERS -- NAS_Storage 
-SWITCH_SERVERS -- PC_MNBOX 
+SWITCH_SERVERS -- E1 : 1 
+SWITCH_SERVERS -- NAS_Storage : 3
+SWITCH_SERVERS -- NAS_Cache : 2
+SWITCH_SERVERS --right-- PC_MNBOX :6
 E4 -- Cluster_Host_1
 E5 -- Cluster_Host_2
 E6 -- Cluster_Host_3
-E3 ---- Cluster_Host_4
+E3 -- Cluster_Host_4
 
-SWITCH_CLUSTER --- Cluster_Node_01
-SWITCH_CLUSTER --- Cluster_Node_02
-SWITCH_CLUSTER --- Cluster_Node_03
-SWITCH_CLUSTER --- Cluster_Node_04
-SWITCH_CLUSTER --- Cluster_Node_05
-SWITCH_CLUSTER --- Cluster_Node_06
-SWITCH_CLUSTER2 --- Cluster_Node_07
-SWITCH_CLUSTER2 --- Cluster_Node_08
-SWITCH_CLUSTER --- Cluster_Node_09 : shared interface (no passthrough)
-SWITCH_CLUSTER --- Cluster_Node_10 : shared interface (no passthrough)
+SWITCH_SERVERS --- SWITCH_CLUSTER : 4 / uplink
+SWITCH_SERVERS --- MacMini : 5 
+SWITCH_CLUSTER -- MacMini : 11
+SWITCH_CLUSTER --- Cluster_Node_01 : 1
+SWITCH_CLUSTER --- Cluster_Node_02 : 2
+SWITCH_CLUSTER --- Cluster_Node_03 : 3
+SWITCH_CLUSTER --- Cluster_Node_04 : 4
+SWITCH_CLUSTER --- Cluster_Node_05 : 5
+SWITCH_CLUSTER --- Cluster_Node_06 : 6
+SWITCH_CLUSTER --- Cluster_Node_07 : 7
+SWITCH_CLUSTER --- Cluster_Node_08 : 8
+SWITCH_CLUSTER -- Cluster_Node_09 : 9
+SWITCH_CLUSTER -- Cluster_Node_10 : 10
 
-Firewall -- SWITCH_SERVERS
+Firewall -- SWITCH_SERVERS : uplink 
 
-DFS ... NAS_Storage: Backup integration
+DFS ..left. NAS_Storage: backup
 
 Cluster_Host_1 ..[hidden].. Cluster_Node_01
 Cluster_Host_1 ..[hidden].. Cluster_Node_02 
@@ -114,6 +122,8 @@ Cluster_Host_4 ..[hidden].. Cluster_Node_07
 Cluster_Host_4 ..[hidden].. Cluster_Node_08
 PC_MNBOX .[hidden]. Cluster_Node_09 : VM
 PC_MNBOX .[hidden]. Cluster_Node_10 : VM
+
+
 
 @enduml
 
