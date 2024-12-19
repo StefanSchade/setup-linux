@@ -1,5 +1,5 @@
 @startuml
-title Future Network Layout with VLAN Segmentation
+title Overview over the home network with segmentation into subnets
 
 skinparam maxWidth 2000
 skinparam maxHeight 900

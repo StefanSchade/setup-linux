@@ -1,5 +1,5 @@
 @startuml
-title Future Network Layout with VLAN Segmentation (Firewall VM)
+title Details of the subnets "Media" and "Central" 
 
 [Firewall]
 
@@ -11,7 +11,7 @@ skinparam component {
 
 rectangle "Media Network" as Media {
     [**ID: 11:**\nSwitch (1 Gbps, 5 Ports)\nNetgear GS105E] as SWITCH_MEDIA
-    [**ID: 30:**\nZotac Nano CI520\nMedia Player] as MEDIAPLAYER_GLOVARY_N305
+    [**ID: 30:**\nGlovary (N305)\nMedia Player] as MEDIAPLAYER_GLOVARY_N305
 
     [**ID: 13**\nInternet Radio\nHama] as Media_Radio
     [**ID: 14**\nSmart TV\nSamsung\n] as Media_TV
