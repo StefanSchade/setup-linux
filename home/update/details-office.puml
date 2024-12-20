@@ -18,7 +18,6 @@ rectangle "Office Network" as OFFICE_NETWORK {
         	[**ID: 06:**\nMini PC\nMNBOXCONET\nPromaox] as MNBOXCONET_HOST
 	        [**ID: 60:**\nVM (N305)\n] as MNBOXCONET_VM1
 	        [**ID: 61:**\nVM (N305)\n] as MNBOXCONET_VM2
-		
 	}
     }
 
