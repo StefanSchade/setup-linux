@@ -31,29 +31,49 @@ rectangle "Server Network (2.5Gbps)" as SERVER_NETWORK {
         [***ID: 05**\nZotac Nano 520 (2.5 GBit/s)\nNAS Cache] as SERVER_NAS_CACHE
      }
 
+     note bottom of VLAN60: storage aspects to be\nconsolidated in central network\nlater - located here\nas this is not 2.5 gbit yet
+
      rectangle "VLAN 50: Maintenance and Diagnostics" as VLAN50 #PaleGreen {
-        rectangle "**ID: 31**\nVM Host (Glovary N305)" as VM_HOST #LightGrey {
-        	rectangle "**VM**\nNAS Buffer\nFast Backups\n **option if need arrises**" as VM_NAS #White {
-		}	
-        	rectangle "**VM**\n Glovary General Server\nshared with Host System" as VM_GENERAL #LightBlue {
-		}
-        	rectangle "**VM**\nGlovary Switch (VM)\nkeeps networking funct. separated\nindependend config and mgmt\nlimit access" as VM_SWITCH #LightGreen {
+        rectangle "**ID: 31 monitoring hosts and network diagnostics**\nHost System: Glovary N305" as VM_HOST #LightGrey {
+        	' rectangle "**VM**\ntbd\ntbd\n **option if need arrises**" as VM_NAS #White {
+		' }	
+        	' rectangle "**VM**\ntbd\ntbd" as VM_GENERAL #LightBlue {
+		' }
+        	rectangle "VM(s)\nhigh bandwith access to cluster hosts\nlocal storage to buffer data before uplink (eventually)\nuse cases: collect server metrics\npresentation of collected data (e.g. elastic stack)" as VM_SWITCH #LightBlue {
 			circle "ETH_3" as E3
 			circle "ETH_4" as E4
 			circle "ETH_5" as E5
 			circle "ETH_6" as E6
+			circle "ETH_2: dedicated uplink" as E2	
 			
 }
                 
-		circle "ETH_1: UPLINK" as E1
-		circle "ETH_2" as E2	
+		circle "ETH_1: shared uplink" as E1
 
-                E1 -[hidden]- E2
+		note bottom of E1: to be used for additional\nservices in the 2,5 GBit Network
+
+                E2 -[hidden]- E3
+                E2 -[hidden]- E4
+                E2 -[hidden]- E5
+                E2 -[hidden]- E6
+
                 E1 -[hidden]- E3
                 E1 -[hidden]- E4
                 E1 -[hidden]- E5
                 E1 -[hidden]- E6
  
+	}
+
+   	rectangle "**ID: 70** monitoring VMs and cluster performance\nHost System: MNBOXCONET N305" as VM_Host_2 #LightGrey {
+		rectangle "VM(s)\nhigh bandwith access to cluster nodes\nlocal storage to buffer data before uplink (eventually)\nuse cases: logfile collection / database replicaton / ...\npresentation of collected data (e.g. Grafana)" as VM_MONITORING #LightBlue {
+			circle "SFP+" as SFP1
+			circle "ETH_1" as MB_E1
+		}
+			circle "SFP+" as SFP2
+
+			note right of SFP2: can connect a laptop for\ntemporary integration into the cluster
+
+			circle "ETH_2" as MB_E2
 	}
 
 
@@ -85,15 +105,28 @@ rectangle "Server Network (2.5Gbps)" as SERVER_NETWORK {
     	  }
      }
 }
+
+
+
+MB_E1 -[hidden]- SFP1
+MB_E2 -[hidden]- SFP1
+
+
+MB_E1 -[hidden]-- SFP2
+MB_E2 -[hidden]-- SFP2
+
+SWITCH_SERVERS -- MB_E1
 SWITCH_SERVERS -- E1 : 1 
+SWITCH_SERVERS -- E2 : 7 
 SWITCH_SERVERS -- NAS_TERRAMASTER : 3
 SWITCH_SERVERS -- SERVER_NAS_CACHE : 2
-SWITCH_SERVERS --right-- OFFICE_MNBOX_HOST :6
-E4 -- CLUSTER_HOST_1
-E5 -- CLUSTER_HOST_2
-E6 -- CLUSTER_HOST_3
-E3 -- CLUSTER_HOST_4
+SWITCH_SERVERS -right- OFFICE_MNBOX_HOST :6
+E4 ---- CLUSTER_HOST_1
+E5 ---- CLUSTER_HOST_2
+E6 ---- CLUSTER_HOST_3
+E3 ---- CLUSTER_HOST_4
 
+SWITCH_CLUSTER --- SFP1
 SWITCH_SERVERS --- SWITCH_CLUSTER : 4 / uplink
 SWITCH_SERVERS --- OFFICE_MAC : 5 
 SWITCH_CLUSTER -- OFFICE_MAC : 11
