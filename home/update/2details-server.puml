@@ -45,11 +45,10 @@ rectangle "Server Network (2.5Gbps)" as SERVER_NETWORK {
 	        circle "ETH_4" as ID_31_E4
 	        circle "ETH_5" as ID_31_E5
 		circle "ETH_6" as ID_31_E6
-		rectangle "trunk port aggregation" as aggreg_1 #White {
-		    circle "ETH_2" as ID_31_E2	
-	            circle "ETH_1" as ID_31_E1
-                }
+		circle "ETH_2: dedicated uplink" as ID_31_E2	
 	    }
+	    circle "ETH_1: direct\nuplink to switch" as ID_31_E1
+	    note bottom of ID_31_E1: to be used for additional\nservices in the 2,5 GBit Network\ndirect connection to switch\nprovided we have resource headroom\non the system
                 ID_31_E2 -[hidden]- ID_31_E3
                 ID_31_E2 -[hidden]- ID_31_E4
                 ID_31_E2 -[hidden]- ID_31_E5
@@ -72,14 +71,8 @@ rectangle "Server Network (2.5Gbps)" as SERVER_NETWORK {
 	rectangle "**ID: 71** present the pool of monitoring data\nHost System: Glovary N305" as VM_Host_3a #LightGrey {
 		rectangle "VM(s)\npresenting consolidated monitoring data" as VM_cons_data_1 #LightBlue {
 			circle "ETH_1" as ID_71_E1
-			rectangle "trunk port aggregation" as agg2 #White {
-			    circle "ETH_2" as ID_71_E2
-			    circle "ETH_3" as ID_71_E3
-                        }
-			rectangle "trunk port aggregation" as agg3 #White {
-			    circle "ETH_4" as ID_71_E4
-			    circle "ETH_5" as ID_71_E5
-                        }
+			circle "ETH_2" as ID_71_E2
+
 		}
 	}
     }
@@ -131,7 +124,7 @@ MB_E1 -[hidden]-- SFP2
 
 ' SWITCH_SERVERS -- MB_E1
 SWITCH_SERVERS -- ID_71_E1
-ID_71_E3 -- ID_31_E1
+SWITCH_SERVERS -- ID_31_E1 : 1 
 ID_31_E2 -- ID_71_E2 
 SWITCH_SERVERS -- NAS_TERRAMASTER : 3
 SWITCH_SERVERS -- SERVER_NAS_CACHE : 2
